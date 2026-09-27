@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Time Tracker</title>
+
+
+    <style>
+
+        /* =========================
+           GENERAL
+        ========================= */
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+        }
+
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+
+        h2 {
+            margin-top: 25px;
+        }
+
+
+        /* =========================
+           GOALS
+        ========================= */
+
+        .goal {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 15px;
+            background: #f5f5f5;
+        }
+
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress {
+            height: 10px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4dabf7;
+        }
+
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+
+        .stat-card {
+            padding: 15px 10px;
+            background: #f5f5f5;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+
+        .stat-card span {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+
+        .stat-card strong {
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        button {
+            border: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+
+        /* =========================
+           SUBTHEMES
+        ========================= */
+
+        .subthemes {
+            margin-top: 15px;
+        }
+
+
+        .subtheme {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 6px;
+            align-items: center;
+
+            background: white;
+
+            padding: 10px;
+
+            margin: 8px 0;
+
+            border-radius: 10px;
+        }
+
+
+        .subtheme-name {
+            font-weight: 500;
+        }
+
+
+        .subtheme-time {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .subtheme button {
+            font-size: 12px;
+        }
+
+
+        .start-button {
+            background: #d3f9d8;
+        }
+
+
+        .stop-button {
+            background: #ffe3e3;
+        }
+
+
+        /* =========================
+           STEPS INPUT
+        ========================= */
+
+        .steps-input {
+            width: 80px;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+
+        .history-row:last-child {
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           30 DAY PROGRESS
+        ========================= */
+
+        .progress-stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+
+        .progress-stat strong {
+            font-size: 14px;
+        }
+
+
+        .progress-label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+
+        .progress-large {
+            height: 14px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 15px 0;
+        }
+
+
+        .progress-large-bar {
+            height: 100%;
+            width: 0%;
+            background: #4dabf7;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <h1>TODAY</h1>
+
+    <h2>Today's Goals</h2>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================= -->
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <span>📅 TODAY</span>
+
+            <strong id="today-total">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>📊 WEEK</span>
+
+            <strong id="week-total">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>🗓️ MONTH</span>
+
+            <strong id="month-total">
+                0 min
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         TOTAL TODAY
+    ========================= -->
+
+    <div class="stat-card">
+
+        <span>🔥 TOTAL TODAY</span>
+
+        <strong id="total-today">
+            0 min
+        </strong>
+
+    </div>
+
+
+    <!-- =========================
+         30 DAY PROGRESS
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>📊 30 DAYS PROGRESS</span>
+
+            <span id="program-day">
+                Day 1 / 30
+            </span>
+
+        </div>
+
+
+        <div class="progress-label">
+            Overall Progress
+        </div>
+
+
+        <div class="progress-large">
+
+            <div
+                id="program-progress"
+                class="progress-large-bar">
+            </div>
+
+        </div>
+
+
+        <div class="progress-stat">
+
+            <span>⏱️ Total Learning</span>
+
+            <strong id="program-total">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="progress-stat">
+
+            <span>🤖 AI</span>
+
+            <strong id="program-ai">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="progress-stat">
+
+            <span>🇬🇧 English</span>
+
+            <strong id="program-english">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="progress-stat">
+
+            <span>🇩🇰 Danish</span>
+
+            <strong id="program-danish">
+                0 min
+            </strong>
+
+        </div>
+
+
+        <div class="progress-stat">
+
+            <span>🏃 Sport</span>
+
+            <strong id="program-sport">
+                0 min
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         LAST 7 DAYS
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>📅 LAST 7 DAYS</span>
+
+        </div>
+
+        <div id="history"></div>
+
+    </div>
+
+
+    <!-- =========================
+         AI
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>🤖 AI</span>
+
+            <span id="ai-time">
+                0 min 0 sek / 60 min
+            </span>
+
+        </div>
+
+
+        <div class="progress">
+
+            <div
+                id="ai-progress"
+                class="progress-bar">
+            </div>
+
+        </div>
+
+
+        <button id="ai-start">
+            ▶ START
+        </button>
+
+
+        <button id="ai-stop">
+            ⏸ STOP
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         ENGLISH
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>🇬🇧 English</span>
+
+            <span id="english-total">
+                0 min
+            </span>
+
+        </div>
+
+
+        <div class="subthemes">
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    📚 Vocabulary
+                </span>
+
+                <span
+                    id="english-vocabulary-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('english-vocabulary')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('english-vocabulary')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🎧 Listening
+                </span>
+
+                <span
+                    id="english-listening-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('english-listening')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('english-listening')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🗣️ Speaking
+                </span>
+
+                <span
+                    id="english-speaking-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('english-speaking')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('english-speaking')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    ✏️ Grammar
+                </span>
+
+                <span
+                    id="english-grammar-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('english-grammar')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('english-grammar')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    📖 Reading
+                </span>
+
+                <span
+                    id="english-reading-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('english-reading')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('english-reading')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DANISH
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>🇩🇰 Danish</span>
+
+            <span id="danish-total">
+                0 min
+            </span>
+
+        </div>
+
+
+        <div class="subthemes">
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    📚 Vocabulary
+                </span>
+
+                <span
+                    id="danish-vocabulary-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('danish-vocabulary')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('danish-vocabulary')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🎧 Listening
+                </span>
+
+                <span
+                    id="danish-listening-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('danish-listening')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('danish-listening')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🗣️ Speaking
+                </span>
+
+                <span
+                    id="danish-speaking-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('danish-speaking')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('danish-speaking')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    ✏️ Grammar
+                </span>
+
+                <span
+                    id="danish-grammar-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('danish-grammar')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('danish-grammar')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    📖 Reading
+                </span>
+
+                <span
+                    id="danish-reading-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSubTimer('danish-reading')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSubTimer('danish-reading')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SPORT
+    ========================= -->
+
+    <div class="goal">
+
+        <div class="goal-header">
+
+            <span>🏃 Sport</span>
+
+            <span id="sport-total">
+                0 min
+            </span>
+
+        </div>
+
+
+        <div class="subthemes">
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🏋️ Gym
+                </span>
+
+                <span
+                    id="sport-gym-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSportTimer('sport-gym')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSportTimer('sport-gym')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🏠 Home Workout
+                </span>
+
+                <span
+                    id="sport-home-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSportTimer('sport-home')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSportTimer('sport-home')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    🚶 Walking
+                </span>
+
+                <span
+                    id="sport-walking-time"
+                    class="subtheme-time">
+                    0:00
+                </span>
+
+                <button
+                    class="start-button"
+                    onclick="startSportTimer('sport-walking')">
+
+                    ▶ START
+
+                </button>
+
+                <button
+                    class="stop-button"
+                    onclick="stopSportTimer('sport-walking')">
+
+                    ⏸ STOP
+
+                </button>
+
+            </div>
+
+
+            <div class="subtheme">
+
+                <span class="subtheme-name">
+                    👟 Steps
+                </span>
+
+                <span
+                    id="steps-value"
+                    class="subtheme-time">
+                    0
+                </span>
+
+                <input
+                    id="steps-input"
+                    class="steps-input"
+                    type="number"
+                    min="0"
+                    placeholder="Steps"
+                >
+
+                <button
+                    class="start-button"
+                    onclick="saveSteps()">
+
+                    SAVE
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+
+        // =========================
+        // 30 DAY PROGRAM SETTINGS
+        // =========================
+
+        let programStartDate =
+            new Date("2026-09-25T00:00:00");
+
+
+        // =========================
+        // DATE
+        // =========================
+
+        let date = new Date();
+
+        let today =
+            date.getFullYear() + "-" +
+            String(date.getMonth() + 1).padStart(2, "0") + "-" +
+            String(date.getDate()).padStart(2, "0");
+
+
+        // =========================
+        // AI TIMER
+        // =========================
+
+        let seconds =
+            Number(
+                localStorage.getItem(
+                    "aiSeconds-" + today
+                )
+            ) || 0;
+
+        let timer = null;
+
+
+        function updateAI() {
+
+            let minutes =
+                Math.floor(seconds / 60);
+
+            let remainingSeconds =
+                seconds % 60;
+
+            document.getElementById(
+                "ai-time"
+            ).textContent =
+                minutes +
+                " min " +
+                remainingSeconds +
+                " sek / 60 min";
+
+            let progress =
+                (seconds / 3600) * 100;
+
+            document.getElementById(
+                "ai-progress"
+            ).style.width =
+                Math.min(progress, 100) + "%";
+
+            updateStatistics();
+            updateTotalToday();
+            updateHistory();
+            update30DayProgress();
+        }
+
+
+        // =========================
+        // DATE HELPER
+        // =========================
+
+        function getDateDaysAgo(days) {
+
+            let result = new Date(date);
+
+            result.setDate(
+                result.getDate() - days
+            );
+
+            return (
+                result.getFullYear() + "-" +
+                String(result.getMonth() + 1).padStart(2, "0") + "-" +
+                String(result.getDate()).padStart(2, "0")
+            );
+        }
+
+
+        // =========================
+        // AI STATISTICS
+        // =========================
+
+        function getDaySeconds(daysAgo) {
+
+            let day =
+                getDateDaysAgo(daysAgo);
+
+            return Number(
+                localStorage.getItem(
+                    "aiSeconds-" + day
+                )
+            ) || 0;
+        }
+
+
+        function updateStatistics() {
+
+            let todaySeconds =
+                getDaySeconds(0);
+
+            let todayMinutes =
+                Math.floor(todaySeconds / 60);
+
+
+            let weekSeconds = 0;
+
+            for (let i = 0; i < 7; i++) {
+
+                weekSeconds +=
+                    getDaySeconds(i);
+
+            }
+
+            let weekMinutes =
+                Math.floor(weekSeconds / 60);
+
+
+            let monthSeconds = 0;
+
+            for (let i = 0; i < 30; i++) {
+
+                monthSeconds +=
+                    getDaySeconds(i);
+
+            }
+
+            let monthMinutes =
+                Math.floor(monthSeconds / 60);
+
+
+            document.getElementById(
+                "today-total"
+            ).textContent =
+                todayMinutes + " min";
+
+
+            document.getElementById(
+                "week-total"
+            ).textContent =
+                weekMinutes + " min";
+
+
+            document.getElementById(
+                "month-total"
+            ).textContent =
+                monthMinutes + " min";
+        }
+
+
+        // =========================
+        // AI START
+        // =========================
+
+        document.getElementById(
+            "ai-start"
+        ).onclick = function() {
+
+            if (timer !== null) {
+                return;
+            }
+
+            timer =
+                setInterval(
+                    function() {
+
+                        seconds++;
+
+                        localStorage.setItem(
+                            "aiSeconds-" + today,
+                            seconds
+                        );
+
+                        updateAI();
+
+                    },
+                    1000
+                );
+        };
+
+
+        // =========================
+        // AI STOP
+        // =========================
+
+        document.getElementById(
+            "ai-stop"
+        ).onclick = function() {
+
+            clearInterval(timer);
+
+            timer = null;
+        };
+
+
+        // =========================
+        // LANGUAGE TIMERS
+        // =========================
+
+        let subTimers = {};
+
+
+        function getSubTimerKey(category) {
+
+            return (
+                "subSeconds-" +
+                category +
+                "-" +
+                today
+            );
+        }
+
+
+        function formatTime(totalSeconds) {
+
+            let minutes =
+                Math.floor(totalSeconds / 60);
+
+            let seconds =
+                totalSeconds % 60;
+
+            return (
+                minutes +
+                ":" +
+                String(seconds).padStart(2, "0")
+            );
+        }
+
+
+        function updateSubTimer(category) {
+
+            let seconds =
+                Number(
+                    localStorage.getItem(
+                        getSubTimerKey(category)
+                    )
+                ) || 0;
+
+            let element =
+                document.getElementById(
+                    category + "-time"
+                );
+
+            if (element) {
+
+                element.textContent =
+                    formatTime(seconds);
+
+            }
+
+            updateLanguageTotals();
+            updateTotalToday();
+            updateHistory();
+            update30DayProgress();
+        }
+
+
+        function startSubTimer(category) {
+
+            if (subTimers[category]) {
+                return;
+            }
+
+            subTimers[category] =
+                setInterval(
+                    function() {
+
+                        let key =
+                            getSubTimerKey(category);
+
+                        let seconds =
+                            Number(
+                                localStorage.getItem(key)
+                            ) || 0;
+
+                        seconds++;
+
+                        localStorage.setItem(
+                            key,
+                            seconds
+                        );
+
+                        updateSubTimer(category);
+
+                    },
+                    1000
+                );
+        }
+
+
+        function stopSubTimer(category) {
+
+            if (subTimers[category]) {
+
+                clearInterval(
+                    subTimers[category]
+                );
+
+                subTimers[category] = null;
+            }
+        }
+
+
+        function updateLanguageTotals() {
+
+            let englishTotal = 0;
+            let danishTotal = 0;
+
+
+            let englishCategories = [
+                "english-vocabulary",
+                "english-listening",
+                "english-speaking",
+                "english-grammar",
+                "english-reading"
+            ];
+
+
+            let danishCategories = [
+                "danish-vocabulary",
+                "danish-listening",
+                "danish-speaking",
+                "danish-grammar",
+                "danish-reading"
+            ];
+
+
+            englishCategories.forEach(
+                function(category) {
+
+                    englishTotal +=
+                        Number(
+                            localStorage.getItem(
+                                getSubTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            danishCategories.forEach(
+                function(category) {
+
+                    danishTotal +=
+                        Number(
+                            localStorage.getItem(
+                                getSubTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            document.getElementById(
+                "english-total"
+            ).textContent =
+                Math.floor(
+                    englishTotal / 60
+                ) + " min";
+
+
+            document.getElementById(
+                "danish-total"
+            ).textContent =
+                Math.floor(
+                    danishTotal / 60
+                ) + " min";
+        }
+
+
+        // =========================
+        // TOTAL TODAY
+        // =========================
+
+        function updateTotalToday() {
+
+            let totalSeconds = 0;
+
+
+            // AI
+
+            totalSeconds +=
+                Number(
+                    localStorage.getItem(
+                        "aiSeconds-" + today
+                    )
+                ) || 0;
+
+
+            // ENGLISH
+
+            let englishCategories = [
+                "english-vocabulary",
+                "english-listening",
+                "english-speaking",
+                "english-grammar",
+                "english-reading"
+            ];
+
+
+            englishCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                getSubTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            // DANISH
+
+            let danishCategories = [
+                "danish-vocabulary",
+                "danish-listening",
+                "danish-speaking",
+                "danish-grammar",
+                "danish-reading"
+            ];
+
+
+            danishCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                getSubTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            // SPORT
+
+            let sportCategories = [
+                "sport-gym",
+                "sport-home",
+                "sport-walking"
+            ];
+
+
+            sportCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                getSportTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            document.getElementById(
+                "total-today"
+            ).textContent =
+                Math.floor(
+                    totalSeconds / 60
+                ) + " min";
+        }
+
+
+        // =========================
+        // SPORT TIMERS
+        // =========================
+
+        let sportTimers = {};
+
+
+        function getSportTimerKey(category) {
+
+            return (
+                "sportSeconds-" +
+                category +
+                "-" +
+                today
+            );
+        }
+
+
+        function startSportTimer(category) {
+
+            if (sportTimers[category]) {
+                return;
+            }
+
+            sportTimers[category] =
+                setInterval(
+                    function() {
+
+                        let key =
+                            getSportTimerKey(category);
+
+                        let seconds =
+                            Number(
+                                localStorage.getItem(key)
+                            ) || 0;
+
+                        seconds++;
+
+                        localStorage.setItem(
+                            key,
+                            seconds
+                        );
+
+                        updateSportTimer(category);
+
+                    },
+                    1000
+                );
+        }
+
+
+        function stopSportTimer(category) {
+
+            if (sportTimers[category]) {
+
+                clearInterval(
+                    sportTimers[category]
+                );
+
+                sportTimers[category] = null;
+            }
+        }
+
+
+        function updateSportTimer(category) {
+
+            let seconds =
+                Number(
+                    localStorage.getItem(
+                        getSportTimerKey(category)
+                    )
+                ) || 0;
+
+
+            let element =
+                document.getElementById(
+                    category + "-time"
+                );
+
+
+            if (element) {
+
+                element.textContent =
+                    formatTime(seconds);
+
+            }
+
+
+            updateSportTotal();
+            updateTotalToday();
+            updateHistory();
+            update30DayProgress();
+        }
+
+
+        function updateSportTotal() {
+
+            let categories = [
+                "sport-gym",
+                "sport-home",
+                "sport-walking"
+            ];
+
+
+            let totalSeconds = 0;
+
+
+            categories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                getSportTimerKey(category)
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            document.getElementById(
+                "sport-total"
+            ).textContent =
+                Math.floor(
+                    totalSeconds / 60
+                ) + " min";
+        }
+
+
+        // =========================
+        // STEPS
+        // =========================
+
+        function getStepsKey() {
+
+            return (
+                "steps-" +
+                today
+            );
+        }
+
+
+        function saveSteps() {
+
+            let input =
+                document.getElementById(
+                    "steps-input"
+                );
+
+
+            let steps =
+                Number(input.value);
+
+
+            if (
+                !Number.isFinite(steps) ||
+                steps < 0
+            ) {
+                return;
+            }
+
+
+            localStorage.setItem(
+                getStepsKey(),
+                Math.floor(steps)
+            );
+
+
+            updateSteps();
+
+            input.value = "";
+        }
+
+
+        function updateSteps() {
+
+            let steps =
+                Number(
+                    localStorage.getItem(
+                        getStepsKey()
+                    )
+                ) || 0;
+
+
+            document.getElementById(
+                "steps-value"
+            ).textContent =
+                steps.toLocaleString("da-DK");
+        }
+
+
+        // =========================
+        // 7 DAY HISTORY
+        // =========================
+
+        function getTotalSecondsForDay(day) {
+
+            let totalSeconds = 0;
+
+
+            // AI
+
+            totalSeconds +=
+                Number(
+                    localStorage.getItem(
+                        "aiSeconds-" + day
+                    )
+                ) || 0;
+
+
+            // ENGLISH
+
+            let englishCategories = [
+                "english-vocabulary",
+                "english-listening",
+                "english-speaking",
+                "english-grammar",
+                "english-reading"
+            ];
+
+
+            englishCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                "subSeconds-" +
+                                category +
+                                "-" +
+                                day
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            // DANISH
+
+            let danishCategories = [
+                "danish-vocabulary",
+                "danish-listening",
+                "danish-speaking",
+                "danish-grammar",
+                "danish-reading"
+            ];
+
+
+            danishCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                "subSeconds-" +
+                                category +
+                                "-" +
+                                day
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            // SPORT
+
+            let sportCategories = [
+                "sport-gym",
+                "sport-home",
+                "sport-walking"
+            ];
+
+
+            sportCategories.forEach(
+                function(category) {
+
+                    totalSeconds +=
+                        Number(
+                            localStorage.getItem(
+                                "sportSeconds-" +
+                                category +
+                                "-" +
+                                day
+                            )
+                        ) || 0;
+
+                }
+            );
+
+
+            return totalSeconds;
+        }
+
+
+        function updateHistory() {
+
+            let history =
+                document.getElementById(
+                    "history"
+                );
+
+
+            history.innerHTML = "";
+
+
+            for (let i = 0; i < 7; i++) {
+
+                let day =
+                    getDateDaysAgo(i);
+
+
+                let totalSeconds =
+                    getTotalSecondsForDay(day);
+
+
+                let minutes =
+                    Math.floor(
+                        totalSeconds / 60
+                    );
+
+
+                let label;
+
+
+                if (i === 0) {
+
+                    label = "Today";
+
+                } else if (i === 1) {
+
+                    label = "Yesterday";
+
+                } else {
+
+                    let d =
+                        new Date(date);
+
+                    d.setDate(
+                        d.getDate() - i
+                    );
+
+
+                    label =
+                        String(
+                            d.getDate()
+                        ).padStart(2, "0") +
+                        "." +
+                        String(
+                            d.getMonth() + 1
+                        ).padStart(2, "0");
+
+                }
+
+
+                let row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "history-row";
+
+
+                row.innerHTML =
+                    "<span>" +
+                    label +
+                    "</span>" +
+                    "<strong>" +
+                    minutes +
+                    " min" +
+                    "</strong>";
+
+
+                history.appendChild(row);
+            }
+        }
+
+
+        // =========================
+        // 30 DAY PROGRESS
+        // =========================
+
+        function getDateString(dateObject) {
+
+            return (
+                dateObject.getFullYear() + "-" +
+                String(
+                    dateObject.getMonth() + 1
+                ).padStart(2, "0") + "-" +
+                String(
+                    dateObject.getDate()
+                ).padStart(2, "0")
+            );
+        }
+
+
+        function getCategorySecondsForDay(
+            category,
+            day
+        ) {
+
+            if (category === "ai") {
+
+                return Number(
+                    localStorage.getItem(
+                        "aiSeconds-" + day
+                    )
+                ) || 0;
+
+            }
+
+
+            if (category === "sport") {
+
+                let sportCategories = [
+                    "sport-gym",
+                    "sport-home",
+                    "sport-walking"
+                ];
+
+                let total = 0;
+
+                sportCategories.forEach(
+                    function(sportCategory) {
+
+                        total +=
+                            Number(
+                                localStorage.getItem(
+                                    "sportSeconds-" +
+                                    sportCategory +
+                                    "-" +
+                                    day
+                                )
+                            ) || 0;
+
+                    }
+                );
+
+                return total;
+            }
+
+
+            if (category === "english") {
+
+                let categories = [
+                    "english-vocabulary",
+                    "english-listening",
+                    "english-speaking",
+                    "english-grammar",
+                    "english-reading"
+                ];
+
+                let total = 0;
+
+                categories.forEach(
+                    function(languageCategory) {
+
+                        total +=
+                            Number(
+                                localStorage.getItem(
+                                    "subSeconds-" +
+                                    languageCategory +
+                                    "-" +
+                                    day
+                                )
+                            ) || 0;
+
+                    }
+                );
+
+                return total;
+            }
+
+
+            if (category === "danish") {
+
+                let categories = [
+                    "danish-vocabulary",
+                    "danish-listening",
+                    "danish-speaking",
+                    "danish-grammar",
+                    "danish-reading"
+                ];
+
+                let total = 0;
+
+                categories.forEach(
+                    function(languageCategory) {
+
+                        total +=
+                            Number(
+                                localStorage.getItem(
+                                    "subSeconds-" +
+                                    languageCategory +
+                                    "-" +
+                                    day
+                                )
+                            ) || 0;
+
+                    }
+                );
+
+                return total;
+            }
+
+
+            return 0;
+        }
+
+
+        function get30DayCategoryTotal(category) {
+
+            let total = 0;
+
+            let currentDate =
+                new Date(programStartDate);
+
+
+            for (
+                let i = 0;
+                i < 30;
+                i++
+            ) {
+
+                let day =
+                    getDateString(currentDate);
+
+
+                total +=
+                    getCategorySecondsForDay(
+                        category,
+                        day
+                    );
+
+
+                currentDate.setDate(
+                    currentDate.getDate() + 1
+                );
+            }
+
+
+            return total;
+        }
+
+
+        function update30DayProgress() {
+
+            let currentDate =
+                new Date(date);
+
+
+            let startDate =
+                new Date(programStartDate);
+
+
+            let difference =
+                currentDate.getTime() -
+                startDate.getTime();
+
+
+            let dayNumber =
+                Math.floor(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                ) + 1;
+
+
+            dayNumber =
+                Math.max(
+                    1,
+                    Math.min(
+                        dayNumber,
+                        30
+                    )
+                );
+
+
+            document.getElementById(
+                "program-day"
+            ).textContent =
+                "Day " +
+                dayNumber +
+                " / 30";
+
+
+            let aiSeconds =
+                get30DayCategoryTotal("ai");
+
+
+            let englishSeconds =
+                get30DayCategoryTotal("english");
+
+
+            let danishSeconds =
+                get30DayCategoryTotal("danish");
+
+
+            let sportSeconds =
+                get30DayCategoryTotal("sport");
+
+
+            let totalSeconds =
+                aiSeconds +
+                englishSeconds +
+                danishSeconds +
+                sportSeconds;
+
+
+            document.getElementById(
+                "program-total"
+            ).textContent =
+                Math.floor(
+                    totalSeconds / 60
+                ) + " min";
+
+
+            document.getElementById(
+                "program-ai"
+            ).textContent =
+                Math.floor(
+                    aiSeconds / 60
+                ) + " min";
+
+
+            document.getElementById(
+                "program-english"
+            ).textContent =
+                Math.floor(
+                    englishSeconds / 60
+                ) + " min";
+
+
+            document.getElementById(
+                "program-danish"
+            ).textContent =
+                Math.floor(
+                    danishSeconds / 60
+                ) + " min";
+
+
+            document.getElementById(
+                "program-sport"
+            ).textContent =
+                Math.floor(
+                    sportSeconds / 60
+                ) + " min";
+
+
+            let overallProgress =
+                (dayNumber / 30) * 100;
+
+
+            document.getElementById(
+                "program-progress"
+            ).style.width =
+                Math.min(
+                    overallProgress,
+                    100
+                ) + "%";
+        }
+
+
+        // =========================
+        // INITIAL LOAD
+        // =========================
+
+        let allSubcategories = [
+
+            "english-vocabulary",
+            "english-listening",
+            "english-speaking",
+            "english-grammar",
+            "english-reading",
+
+            "danish-vocabulary",
+            "danish-listening",
+            "danish-speaking",
+            "danish-grammar",
+            "danish-reading"
+
+        ];
+
+
+        allSubcategories.forEach(
+            function(category) {
+
+                updateSubTimer(category);
+
+            }
+        );
+
+
+        updateLanguageTotals();
+
+        updateAI();
+
+
+        // =========================
+        // SPORT INITIAL LOAD
+        // =========================
+
+        updateSportTimer("sport-gym");
+
+        updateSportTimer("sport-home");
+
+        updateSportTimer("sport-walking");
+
+        updateSportTotal();
+
+        updateSteps();
+
+        updateTotalToday();
+
+        updateHistory();
+
+        update30DayProgress();
+
+
+    </script>
+
+
+</body>
+
+</html>
